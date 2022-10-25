@@ -19,6 +19,7 @@ PressureFlow = quote
   V::Form1{X}
   P::Form0{X}
   C::Form0{X}
+  C::Form0{X}
 
   # derived quantities
   ΔV::Form1{X}
@@ -26,27 +27,36 @@ PressureFlow = quote
   ∇C::Form1{X}
   ΔP::Form0{X}
   ΔC::Form0{X}
+  ΔC::Form0{X}
   ϕₚ::Form1{X}
+  ϕc::Form1{X}
   ϕc::Form1{X}
 
   # tanvars
   V̇::Form1{X}
   Ṗ::Form0{X}
   Ċ::Form0{X}
+  Ċ::Form0{X}
   ∂ₜ(V) == V̇
   ∂ₜ(P) == Ṗ
+  ∂ₜ(C) == Ċ
   ∂ₜ(C) == Ċ
   
   ∇P == d₀(P)
   ∇C == d₀(C)
+  ∇C == d₀(C)
   ΔV == Δ₁(V)
   ΔP == Δ₀(P)
   ΔC == Δ₀(P)
+  ΔC == Δ₀(P)
 
   V̇  == α(∇P) + μ(ΔV)
-  ϕₚ == γₚ(-(L₀(V, P))) 
+  ϕₚ == γₚₚ(-(L₀(V, P))) 
   ϕc == γc(-(L₀(V, C))) 
-  Ṗ == βₚ(Δ₀(P)) + ∘(dual_d₁,⋆₀⁻¹)(ϕₚ)
+  ϕc == γc(-(L₀(V, C))) 
+  Ṗ == βₚₚ(Δ₀(P)) + ∘(dual_d₁,⋆₀⁻¹)(ϕₚ)
+  Ċ == βc(Δ₀(C)) + ∘(dual_d₁,⋆₀⁻¹)(ϕc)
+  
   Ċ == βc(Δ₀(C)) + ∘(dual_d₁,⋆₀⁻¹)(ϕc)
 
   
@@ -122,8 +132,8 @@ earth = EmbeddedDeltaDualComplex2D{Bool,Float64,Point3}(primal_earth)
 subdivide_duals!(earth, Circumcenter())
 
 physics = SummationDecapode(parse_decapode(PressureFlow))
-gensim(expand_operators(physics), [:C, :P, :V])
-sim = eval(gensim(expand_operators(physics), [:C, :P, :V]))
+gensim(expand_operators(physics), [:C, :C, :P, :V])
+sim = eval(gensim(expand_operators(physics), [:C, :C, :P, :V]))
 
 fₘ = sim(earth)
 
